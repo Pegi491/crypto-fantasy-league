@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1074491855880",
+    "project_id": "crypto-fantasy-9c8d1",
+    "storage_bucket": "crypto-fantasy-9c8d1.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1074491855880:android:58f78a4525d5ada7a02dbd",
+        "android_client_info": {
+          "package_name": "com.cryptofantasy.crypto_fantasy_league"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCzExJImNspXyjB9_q31F8PtBtFmtoWx8c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

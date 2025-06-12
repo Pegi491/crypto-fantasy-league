@@ -18,17 +18,17 @@ import 'utils/logger.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   try {
     // Initialize Firebase
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    
+
     // Initialize logging
     AppLogger.init();
     AppLogger.info('App started successfully');
-    
+
     runApp(const CryptoFantasyLeagueApp());
   } catch (e, stackTrace) {
     AppLogger.error('Failed to initialize app', e, stackTrace);
