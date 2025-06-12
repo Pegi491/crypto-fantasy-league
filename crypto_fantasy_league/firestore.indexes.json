@@ -1,0 +1,125 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "assets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "type",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "isActive",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "metadata.market_cap",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "assets",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isPopular",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "metadata.rank",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "daily_stats",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "assetId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "wallet_balances",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "address",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "wallet_balances",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "contractAddress",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "balanceFormatted",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "social_metrics",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "symbol",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "timestamp",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "leagues",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "isPublic",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "mode",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "created_at",
+          "order": "DESCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "teams",
+      "queryScope": "COLLECTION_GROUP",
+      "fields": [
+        {
+          "fieldPath": "leagueId",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "totalPoints",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}
