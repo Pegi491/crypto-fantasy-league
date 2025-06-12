@@ -1,0 +1,168 @@
+// ABOUTME: Firestore security rules for the Crypto Fantasy League app
+// ABOUTME: Controls access to leagues, teams, assets, scores, and user data with proper permissions
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    function isCommissioner(leagueId) {
+      return isAuthenticated() && 
+             get(/databases/$(database)/documents/leagues/$(leagueId)).data.commissionerId == request.auth.uid;
+    }
+    
+    function isTeamOwner(teamDoc) {
+      return isAuthenticated() && teamDoc.data.userId == request.auth.uid;
+    }
+    
+    function isDraftLocked(leagueId) {
+      // Draft is locked on Sunday 23:59 UTC - this would be calculated server-side
+      // For now, we'll allow draft modifications (this will be enhanced later)
+      return false;
+    }
+    
+    // Users collection - basic user profiles
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
+    
+    // Leagues collection
+    match /leagues/{leagueId} {
+      // Anyone can read public league data
+      allow read: if true;
+      
+      // Only authenticated users can create leagues
+      allow create: if isAuthenticated() && 
+                       request.auth.uid == resource.data.commissionerId;
+      
+      // Only commissioners can update league settings
+      allow update: if isCommissioner(leagueId);
+      
+      // Only commissioners can delete leagues
+      allow delete: if isCommissioner(leagueId);
+      
+      // Teams subcollection
+      match /teams/{teamId} {
+        // Anyone can read team data (for league standings)
+        allow read: if true;
+        
+        // Only team owners can create their team
+        allow create: if isAuthenticated() && 
+                         request.auth.uid == resource.data.userId;
+        
+        // Only team owners can update their team data (before draft lock)
+        // Commissioners can also update for admin purposes
+        allow update: if (isTeamOwner(resource) && !isDraftLocked(leagueId)) ||
+                         isCommissioner(leagueId);
+        
+        // Only team owners or commissioners can delete teams
+        allow delete: if isTeamOwner(resource) || isCommissioner(leagueId);
+        
+        // Weekly team data subcollection
+        match /weeks/{week} {
+          // Anyone can read weekly data
+          allow read: if true;
+          
+          // Only team owners can create/update their weekly data
+          allow create, update: if isTeamOwner(get(/databases/$(database)/documents/leagues/$(leagueId)/teams/$(teamId)));
+        }
+        
+        // Free agent moves subcollection
+        match /faMoves/{moveId} {
+          // Anyone can read FA moves (for transparency)
+          allow read: if true;
+          
+          // Only team owners can create FA moves
+          allow create: if isTeamOwner(get(/databases/$(database)/documents/leagues/$(leagueId)/teams/$(teamId)));
+        }
+      }
+      
+      // Scores subcollection
+      match /scores/{week} {
+        // Anyone can read scores
+        allow read: if true;
+        
+        // Only server-side functions can write scores
+        // In production, this would be restricted to Cloud Functions
+        allow write: if false;
+      }
+    }
+    
+    // Assets collection - global asset database
+    match /assets/{assetId} {
+      // Anyone can read asset data
+      allow read: if true;
+      
+      // Only authenticated users can suggest new assets
+      allow create: if isAuthenticated();
+      
+      // Only admin users can update asset data
+      // For now, we'll allow authenticated users (this should be restricted in production)
+      allow update: if isAuthenticated();
+      
+      // No direct deletion of assets
+      allow delete: if false;
+      
+      // Daily stats subcollection
+      match /dailyStats/{date} {
+        // Anyone can read daily stats
+        allow read: if true;
+        
+        // Only server-side functions can write daily stats
+        allow write: if false;
+      }
+    }
+    
+    // Global leaderboards and statistics
+    match /leaderboards/{document=**} {
+      // Anyone can read leaderboards
+      allow read: if true;
+      
+      // Only server-side functions can update leaderboards
+      allow write: if false;
+    }
+    
+    // System configuration and announcements
+    match /system/{document} {
+      // Anyone can read system announcements
+      allow read: if true;
+      
+      // Only admin users can write system data
+      allow write: if false;
+    }
+    
+    // Waiver claims (temporary storage for batch processing)
+    match /waiverClaims/{claimId} {
+      // Team owners can read their own claims
+      allow read: if isAuthenticated() && resource.data.userId == request.auth.uid;
+      
+      // Team owners can create waiver claims
+      allow create: if isAuthenticated() && request.auth.uid == resource.data.userId;
+      
+      // No updates or deletes (claims are processed in batch)
+      allow update, delete: if false;
+    }
+    
+    // Analytics and usage tracking (optional)
+    match /analytics/{document=**} {
+      // Only server-side functions can write analytics
+      allow write: if false;
+      
+      // No read access to analytics
+      allow read: if false;
+    }
+    
+    // Block all other paths
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
