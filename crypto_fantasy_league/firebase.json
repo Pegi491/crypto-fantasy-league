@@ -1,0 +1,21 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "crypto-fantasy-9c8d1",
+                    "appId": "1:1074491855880:android:58f78a4525d5ada7a02dbd",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "ios": {
+                "default": {
+                    "projectId": "crypto-fantasy-9c8d1",
+                    "appId": "1:1074491855880:ios:b84382fe25bc2096a02dbd",
+                    "uploadDebugSymbols": true,
+                    "fileOutput": "ios/Runner/GoogleService-Info.plist"
+                }
+            }
+        }
+    }
+}
